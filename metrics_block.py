@@ -3,6 +3,7 @@ import psutil
 from nio.common.block.base import Block
 from nio.common.signal.base import Signal
 from nio.common.command import command
+from nio.common.command.params.string import StringParameter
 from nio.common.discovery import Discoverable, DiscoverableType
 from nio.metadata.properties.object import ObjectProperty
 from nio.metadata.properties.holder import PropertyHolder
@@ -69,7 +70,7 @@ class Metrics(Block):
             if self.menu.cpu_perc:
                 result['cpu_percentage'] = {
                     'overall': psutil.cpu_percent(),
-                    'per_cpu': psutil.cpu_percent(percpu=False)
+                    'per_cpu': psutil.cpu_percent(percpu=True)
                 }
 
             # Virtual memory usage
