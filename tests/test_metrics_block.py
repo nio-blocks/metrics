@@ -17,7 +17,7 @@ class TestMetricsBlock(NIOBlockTestCase):
     def setUp(self):
         super().setUp()
         self.report = None
-        self.expected_fields = [
+        self.expected = [
             'cpu_percentage',
             'virtual_memory',
             'swap_memory',
@@ -42,7 +42,13 @@ class TestMetricsBlock(NIOBlockTestCase):
         blk.stop()
         self.assert_num_signals_notified(1)
         self.assertIsNotNone(self.report)
-        self.assertCountEqual(self.report.to_dict(), self.expected_fields)
+
+        for k in self.report.to_dict():
+            for idx, f in enumerate(self.expected):
+                if k.startswith(f):
+                    break
+                elif idx == len(self.expected)-1:
+                    raise AssertionError("Unexpected report key '%s'" % k)
         
         
         
