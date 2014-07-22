@@ -105,7 +105,7 @@ class Metrics(Block):
             # quite long and not usually used.
             if self.menu.skt_conns:
                 result['network_connections'] = \
-                    [self.to_dict(skt._asdict()) \
+                    [self.native_dict(skt._asdict()) \
                      for skt in psutil.net_connections()]
 
         except Exception as e:
@@ -132,5 +132,5 @@ class Metrics(Block):
         for f in data.keys():
             result['{0}_{1}'.format(base,f)] = data[f]
 
-    def to_dict(self, obj):
+    def native_dict(self, obj):
         return {k: obj[k] for k in obj}
