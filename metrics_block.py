@@ -67,39 +67,46 @@ class Metrics(Block):
         try:
             # CPU usage statistics
             if self.menu.cpu_perc:
-                result['cpu_percentage'] = {
-                    'overall': psutil.cpu_percent(),
-                    'per_cpu': psutil.cpu_percent(percpu=False)
-                }
+                base = 'cpu_percentage'
+                fields = ['overall', 'per_cpu']
 
+                for idx, f in enumerate(fields):
+                    data = psutil.cpu_percent(percpu=bool(idx))
+                    result["{0}_{1}".format(base,f)] = data
+         
             # Virtual memory usage
             if self.menu.virtual_mem:
-                result['virtual_memory'] = psutil.virtual_memory()._asdict()
+                self._collect_results('virtual_memory', result)
 
             # Swap memory usage
             if self.menu.swap_mem:
-                result['swap_memory'] = psutil.swap_memory()._asdict()
+                self._collect_results('swap_memory', result)
+                # result['swap_memory'] = psutil.swap_memory()._asdict()
 
             # Disk usage
             if self.menu.disk_usage:
-                result['disk_usage'] = psutil.disk_usage('/')._asdict()
+                self._collect_results('disk_usage', result, ['/'])
             
             # Disk I/O statistics
             if self.menu.disk_io_ct:
-                result['disk_io_counters'] = psutil.disk_io_counters()._asdict()
+                self._collect_results('disk_io_counters', result)
             
             # Net I/O statistics
             if self.menu.net_io_ct:
-                result['net_io_counters'] = psutil.net_io_counters()._asdict()
+                self._collect_results('net_io_counters', result)
 
-            # Process IDs
+            # Process IDs - this dumps a big list and is disabled by default
             if self.menu.pids:
                 result['process_identifiers'] = psutil.pids()
 
-            # Socket Connections
+            # Socket Connections - dumps a big list and requires superuser
+            # also disabled by default. Dumps a list of dictionaries; this
+            # approach won't look very nice in the database, but is generally
+            # quite long and not usually used.
             if self.menu.skt_conns:
                 result['network_connections'] = \
-                    [skt._asdict() for skt in psutil.net_connections()]
+                    [self.to_dict(skt._asdict()) \
+                     for skt in psutil.net_connections()]
 
         except Exception as e:
             self._logger.error(
@@ -116,3 +123,14 @@ class Metrics(Block):
                 return None
         else:
             return result
+
+    def _collect_results(self, base, result, args=[]):
+        ''' Helper function to flatten the data for each psutil result
+
+        '''
+        data = getattr(psutil, base)(*args)._asdict()
+        for f in data.keys():
+            result['{0}_{1}'.format(base,f)] = data[f]
+
+    def to_dict(self, obj):
+        return {k: obj[k] for k in obj}
