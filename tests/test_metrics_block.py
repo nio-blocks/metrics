@@ -1,4 +1,4 @@
-from metrics.metrics_block import Metrics
+from ..metrics_block import Metrics
 from nio.util.support.block_test_case import NIOBlockTestCase
 from nio.modules.threading import Event
 
