@@ -9,7 +9,7 @@ from nio.metadata.properties.object import ObjectProperty
 from nio.metadata.properties.holder import PropertyHolder
 from nio.metadata.properties.bool import BoolProperty
 from nio.metadata.properties.timedelta import TimeDeltaProperty
-from nio.modules.scheduler.imports import Job
+from nio.modules.scheduler import Job
 
 
 RETRY_LIMIT = 3
