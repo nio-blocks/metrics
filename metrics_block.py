@@ -120,6 +120,7 @@ class Metrics(Block):
                     "System report failed {0} times, aborting...".format(
                         RETRY_LIMIT)
                 )
+                self._retry_count = 0
                 return None
         else:
             return result
