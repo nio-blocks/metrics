@@ -3,7 +3,6 @@ import psutil
 from nio.common.block.base import Block
 from nio.common.signal.base import Signal
 from nio.common.command import command
-from nio.common.command.params.string import StringParameter
 from nio.common.discovery import Discoverable, DiscoverableType
 from nio.metadata.properties.object import ObjectProperty
 from nio.metadata.properties.holder import PropertyHolder
@@ -38,8 +37,9 @@ class Metrics(Block):
     
     menu = ObjectProperty(Menu, title='Menu')
     interval = TimeDeltaProperty(title='Interval')
-    
+
     def __init__(self):
+        super().__init__()
         self._metrics_job = None
         self._retry_count = 0
 

@@ -6,6 +6,7 @@ from nio.modules.threading import Event
 class EventMetrics(Metrics):
     
     def __init__(self, e):
+        super().__init__()
         self._e = e
 
     def _collect_and_notify(self):
