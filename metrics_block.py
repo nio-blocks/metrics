@@ -1,4 +1,10 @@
+import os
 import psutil
+import ctypes
+import subprocess
+import platform
+from datetime import datetime
+import pickle
 
 from nio.common.block.base import Block
 from nio.common.signal.base import Signal
@@ -11,11 +17,12 @@ from nio.metadata.properties.timedelta import TimeDeltaProperty
 from nio.modules.scheduler import Job
 
 
+
 RETRY_LIMIT = 3
 
 
 class Menu(PropertyHolder):
-    
+
     cpu_perc = BoolProperty(title='CPU Percentage', default=True)
     virtual_mem = BoolProperty(title='Virtual Memory', default=True)
     swap_mem = BoolProperty(title='Swap Memory', default=True)
@@ -31,10 +38,13 @@ class Menu(PropertyHolder):
     skt_conns = BoolProperty(title='Socket Connections')
 
 
+@command('platform')
+@command('timestamp')
+@command('cpu')
 @command('report')
 @Discoverable(DiscoverableType.block)
 class Metrics(Block):
-    
+
     menu = ObjectProperty(Menu, title='Menu')
     interval = TimeDeltaProperty(title='Interval')
 
@@ -53,6 +63,51 @@ class Metrics(Block):
     def stop(self):
         if self._metrics_job is not None:
             self._metrics_job.cancel()
+
+    def timestamp(self):
+        '''returns the current system timestamp'''
+        return datetime.isoformat(datetime.utcnow())
+
+    @staticmethod
+    def _get_processor():
+        '''Get type of processor
+        http://stackoverflow.com/questions/4842448/getting-processor-information-in-python
+        '''
+        out = None
+        if platform.system() == "Windows":
+            out = platform.processor()
+        elif platform.system() == "Darwin":
+            os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
+            command = "sysctl -n machdep.cpu.brand_string"
+            out = subprocess.check_output(command, shell=True).strip().decode()
+        elif platform.system() == "Linux":
+            command = "cat /proc/cpuinfo"
+            all_info = subprocess.check_output(command, shell=True).strip().decode()
+            for line in all_info.split("\n"):
+                if "model name" in line:
+                    out = re.sub(".*model name.*:", "", line, 1)
+
+        if out is None:
+            return platform.processor()
+        else:
+            return out
+
+    def platform(self):
+        '''Returns platform data
+        '''
+        out = {key: getattr(platform, key)() for key in
+               ('machine', 'version', 'platform', 'dist', 'system')}
+        out['python'] = {key: getattr(platform, "python_" + key)() for key in
+            ('implementation', 'compiler', 'version',
+            'version_tuple')
+        }
+        out['python']['architecture'] = int(ctypes.sizeof(ctypes.c_voidp) * 8)
+        out['processor'] = self._get_processor()
+        return out
+
+    def cpu(self):
+        '''returns the overall cpu usage'''
+        return psutil.cpu_percent(percpu=False)
 
     def report(self):
         return self._collect_stats()
@@ -73,7 +128,7 @@ class Metrics(Block):
                 for idx, f in enumerate(fields):
                     data = psutil.cpu_percent(percpu=bool(idx))
                     result["{0}_{1}".format(base,f)] = data
-         
+
             # Virtual memory usage
             if self.menu.virtual_mem:
                 self._collect_results('virtual_memory', result)
@@ -86,11 +141,11 @@ class Metrics(Block):
             # Disk usage
             if self.menu.disk_usage:
                 self._collect_results('disk_usage', result, ['/'])
-            
+
             # Disk I/O statistics
             if self.menu.disk_io_ct:
                 self._collect_results('disk_io_counters', result)
-            
+
             # Net I/O statistics
             if self.menu.net_io_ct:
                 self._collect_results('net_io_counters', result)
