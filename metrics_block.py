@@ -1,4 +1,5 @@
 import os
+import re
 import psutil
 import ctypes
 import subprocess
@@ -77,9 +78,13 @@ class Metrics(Block):
         if platform.system() == "Windows":
             out = platform.processor()
         elif platform.system() == "Darwin":
+            path = os.environ['PATH']
             os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
-            command = "sysctl -n machdep.cpu.brand_string"
-            out = subprocess.check_output(command, shell=True).strip().decode()
+            try:
+                command = "sysctl -n machdep.cpu.brand_string"
+                out = subprocess.check_output(command, shell=True).strip().decode()
+            finally:
+                os.environ['PATH'] = path
         elif platform.system() == "Linux":
             command = "cat /proc/cpuinfo"
             all_info = subprocess.check_output(command, shell=True).strip().decode()
