@@ -108,6 +108,7 @@ class Metrics(Block):
         }
         out['python']['architecture'] = int(ctypes.sizeof(ctypes.c_voidp) * 8)
         out['processor'] = self._get_processor()
+        out['cores'] = len(psutil.cpu_percent(percpu=True))
         return out
 
     def cpu(self):
