@@ -27,7 +27,7 @@ class TestMetricsBlock(NIOBlockTestCase):
             'net_io_counters'
         ]
     
-    def signals_notified(self, signals):
+    def signals_notified(self, signals, output_id='default'):
         self.report = signals[0]
 
     def test_generate_metrics(self):
