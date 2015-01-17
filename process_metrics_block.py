@@ -43,16 +43,26 @@ class ProcessMetrics(Block):
         self._retry_count = 0
 
     def process_signals(self, signals):
+        results = []
         for sig in signals:
             try:
                 pid = self.pid_expr(sig)
                 stats = self._collect_stats(pid)
                 if stats:
-                    self.notify_signals([Signal(stats)])
+                    results.append(Signal(stats))
 
             except NoPIDException:
                 # if there's no PID in the signal, skip it
-                self._logger.debug("Skipping signal {}".format(sig.to_dict()))
+                self._logger.debug(
+                    "Skipping signal {}: No PID".format(sig.to_dict()))
+                
+            except Exception as e:
+                self._logger.error(
+                    "Error while processing signal: {}: {}".format(
+                        type(e).__name__, str(e)))
+
+        self.notify_signals(results)
+                        
 
     def _collect_stats(self, pid):
         result = {'pid': pid}
@@ -101,4 +111,5 @@ class ProcessMetrics(Block):
                 self._retry_count = 0
                 return None
         else:
+            self._retry_count = 0
             return result
