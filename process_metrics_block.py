@@ -61,7 +61,8 @@ class ProcessMetrics(Block):
                     "Error while processing signal: {}: {}".format(
                         type(e).__name__, str(e)))
 
-        self.notify_signals(results)
+        if results:
+            self.notify_signals(results)
                         
 
     def _collect_stats(self, pid):
