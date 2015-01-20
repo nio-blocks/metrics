@@ -123,6 +123,7 @@ class Metrics(Block):
                 self._retry_count = 0
                 return None
         else:
+            self._retry_count = 0
             return result
 
     def _collect_results(self, base, result, args=[]):
