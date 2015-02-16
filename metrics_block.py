@@ -69,8 +69,7 @@ class Metrics(Block):
         '''returns the current system timestamp'''
         return datetime.isoformat(datetime.utcnow())
 
-    @staticmethod
-    def _get_processor():
+    def _get_processor(self):
         '''Get type of processor
         http://stackoverflow.com/questions/4842448/getting-processor-information-in-python
         '''
