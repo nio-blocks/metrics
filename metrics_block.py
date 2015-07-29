@@ -15,6 +15,7 @@ from nio.metadata.properties.object import ObjectProperty
 from nio.metadata.properties.holder import PropertyHolder
 from nio.metadata.properties.bool import BoolProperty
 from nio.metadata.properties.timedelta import TimeDeltaProperty
+from nio.metadata.properties.version import VersionProperty
 from nio.modules.scheduler import Job
 
 
@@ -48,6 +49,7 @@ class Menu(PropertyHolder):
 @Discoverable(DiscoverableType.block)
 class Metrics(Block):
 
+    version = VersionProperty('0.1.0', min_version='0.1.0')
     menu = ObjectProperty(Menu, title='Menu')
     interval = TimeDeltaProperty(title='Interval')
 
