@@ -1,10 +1,11 @@
-from ..metrics_block import Metrics
+from collections import defaultdict
 from nio.util.support.block_test_case import NIOBlockTestCase
 from nio.modules.threading import Event
+from ..metrics_block import Metrics
 
 
 class EventMetrics(Metrics):
-    
+
     def __init__(self, e):
         super().__init__()
         self._e = e
@@ -17,7 +18,8 @@ class TestMetricsBlock(NIOBlockTestCase):
 
     def setUp(self):
         super().setUp()
-        self.report = None
+        # This will keep a list of signals notified for each output
+        self.last_notified = defaultdict(list)
         self.expected = [
             'cpu_percentage',
             'virtual_memory',
@@ -26,9 +28,9 @@ class TestMetricsBlock(NIOBlockTestCase):
             'disk_io_counters',
             'net_io_counters'
         ]
-    
+
     def signals_notified(self, signals, output_id='default'):
-        self.report = signals[0]
+        self.last_notified[output_id].extend(signals)
 
     def test_generate_metrics(self):
         event = Event()
@@ -42,17 +44,10 @@ class TestMetricsBlock(NIOBlockTestCase):
         event.wait(1)
         blk.stop()
         self.assert_num_signals_notified(1)
-        self.assertIsNotNone(self.report)
-
-        for k in self.report.to_dict():
+        self.assertTrue('default' in self.last_notified)
+        for k in self.last_notified['default'][0].to_dict():
             for idx, f in enumerate(self.expected):
                 if k.startswith(f):
                     break
                 elif idx == len(self.expected)-1:
                     raise AssertionError("Unexpected report key '%s'" % k)
-        
-        
-        
-        
-        
-                             
