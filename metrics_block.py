@@ -31,6 +31,8 @@ class Menu(PropertyHolder):
     disk_io_ct = BoolProperty(title='Disk I/O Stats', default=True)
     net_io_ct = BoolProperty(title='Network I/O Stats', default=True)
 
+    sensors = BoolProperty(title='Sensors', default=False)
+
     # a fairly long list in the general case. not included by default
     pids = BoolProperty(title='Process Identifiers')
 
@@ -155,6 +157,11 @@ class Metrics(Block):
             if self.menu.net_io_ct:
                 self._collect_results('net_io_counters', result)
 
+            # Sensors statistics - disabled by default.
+            # Requires [lm-sensors](http://www.lm-sensors.org/)
+            if self.menu.sensors:
+                self._collect_sensors_results(result)
+
             # Process IDs - this dumps a big list and is disabled by default
             if self.menu.pids:
                 result['process_identifiers'] = psutil.pids()
@@ -193,6 +200,26 @@ class Metrics(Block):
         data = getattr(psutil, base)(*args)._asdict()
         for f in data.keys():
             result['{0}_{1}'.format(base,f)] = data[f]
+
+    def _collect_sensors_results(self, result):
+        sensors = self._subprocess_command('sensors')
+        if sensors:
+            temperatures = {
+                match[0]: float(match[1]) for match in \
+                re.findall("^(.*?)\:\s+\+?(.*?)°C", sensors, re.MULTILINE)
+            }
+            for f in temperatures.keys():
+                result['{0}_{1}'.format('sensors', f)] = temperatures[f]
+
+    def _subprocess_command(self, command):
+        out = None
+        try:
+            out = subprocess.check_output(command, shell=True).strip().decode()
+            self._logger.debug('Command output: {}: {}'.format(command, out))
+        except:
+            self._logger.exception(
+                'Failed running subprocess command: {}'.format(command))
+        return out
 
     def native_dict(self, obj):
         return {k: obj[k] for k in obj}

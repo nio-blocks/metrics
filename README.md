@@ -11,6 +11,8 @@ Properties
 Dependencies
 ------------
 -   [**psutil**](https://pypi.python.org/pypi/psutil)
+-   [lm-sensors](http://linux.die.net/man/1/sensors): (Optional) Used for
+        gathering cpu temperature info.
 
 Commands
 --------
