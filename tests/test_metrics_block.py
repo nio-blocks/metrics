@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import patch
 from collections import defaultdict
 from nio.util.support.block_test_case import NIOBlockTestCase
 from nio.modules.threading import Event
@@ -53,7 +53,8 @@ class TestMetricsBlock(NIOBlockTestCase):
                 elif idx == len(self.expected)-1:
                     raise AssertionError("Unexpected report key '%s'" % k)
 
-    def test_sensors(self):
+    @patch(Metrics.__module__ + '.Sensors.read')
+    def test_sensors(self, patch_read):
         event = Event()
         blk = EventMetrics(event)
         self.configure_block(blk, {
@@ -70,40 +71,46 @@ class TestMetricsBlock(NIOBlockTestCase):
                 "milliseconds": 500
             }
         })
-        blk._subprocess_command = MagicMock(
-            return_value=self._sample_sensors_output())
-        print(blk._subprocess_command)
+        patch_read.side_effect = self._sample_sensors_output
         blk.start()
         event.wait(1)
         blk.stop()
         self.assert_num_signals_notified(1)
         self.assertTrue('default' in self.last_notified)
         self.assertDictEqual(self.last_notified['default'][0].to_dict(),
-                             {'sensors_Core 0': 42.0,
-                              'sensors_Core 1': 42.0,
-                              'sensors_Core 2': 41.0,
-                              'sensors_Core 3': 41.0,
-                              'sensors_temp1': 26.8})
+                             {'sensors_acpitz-virtual-0_temp1_input': 26.800,
+                              'sensors_acpitz-virtual-0_temp1_max': 105.000})
 
-    def _sample_sensors_output(self):
+    def _sample_sensors_output(self, result):
         '''
-        cpitz-virtual-0
+        acpitz-virtual-0
         Adapter: Virtual device
-        temp1:        +26.8°C  (crit = +90.0°C)
+        temp1:
+          temp1_input: 26.800
+          temp1_crit: 90.000
 
         coretemp-isa-0000
         Adapter: ISA adapter
-        Core 0:       +42.0°C  (high = +105.0°C, crit = +105.0°C)
-        Core 1:       +42.0°C  (high = +105.0°C, crit = +105.0°C)
-        Core 2:       +41.0°C  (high = +105.0°C, crit = +105.0°C)
-        Core 3:       +41.0°C  (high = +105.0°C, crit = +105.0°C)
+        Core 0:
+          temp2_input: 43.000
+          temp2_max: 105.000
+          temp2_crit: 105.000
+          temp2_crit_alarm: 0.000
+        Core 1:
+          temp3_input: 43.000
+          temp3_max: 105.000
+          temp3_crit: 105.000
+          temp3_crit_alarm: 0.000
+        Core 2:
+          temp4_input: 42.000
+          temp4_max: 105.000
+          temp4_crit: 105.000
+          temp4_crit_alarm: 0.000
+        Core 3:
+          temp5_input: 42.000
+          temp5_max: 105.000
+          temp5_crit: 105.000
+          temp5_crit_alarm: 0.000
         '''
-        return ('acpitz-virtual-0\n,'
-                'Adapter: Virtual device\n'
-                'temp1:        +26.8°C  (crit = +90.0°C)\n\n'
-                'coretemp-isa-0000\n'
-                'Adapter: ISA adapter\n'
-                'Core 0:       +42.0°C  (high = +105.0°C, crit = +105.0°C)\n'
-                'Core 1:       +42.0°C  (high = +105.0°C, crit = +105.0°C)\n'
-                'Core 2:       +41.0°C  (high = +105.0°C, crit = +105.0°C)\n'
-                'Core 3:       +41.0°C  (high = +105.0°C, crit = +105.0°C)')
+        result['sensors_acpitz-virtual-0_temp1_input'] = 26.800
+        result['sensors_acpitz-virtual-0_temp1_max'] = 105.000

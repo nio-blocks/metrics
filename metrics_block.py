@@ -6,7 +6,6 @@ import subprocess
 import platform
 from datetime import datetime
 import pickle
-
 from nio.common.block.base import Block
 from nio.common.signal.base import Signal
 from nio.common.command import command
@@ -17,6 +16,7 @@ from nio.metadata.properties.bool import BoolProperty
 from nio.metadata.properties.timedelta import TimeDeltaProperty
 from nio.metadata.properties.version import VersionProperty
 from nio.modules.scheduler import Job
+from .sensors import Sensors
 
 
 
@@ -204,14 +204,14 @@ class Metrics(Block):
             result['{0}_{1}'.format(base,f)] = data[f]
 
     def _collect_sensors_results(self, result):
-        sensors = self._subprocess_command('sensors')
-        if sensors:
-            temperatures = {
-                match[0]: float(match[1]) for match in \
-                re.findall("^(.*?)\:\s+\+?(.*?)°C", sensors, re.MULTILINE)
-            }
-            for f in temperatures.keys():
-                result['{0}_{1}'.format('sensors', f)] = temperatures[f]
+        try:
+            self._logger.debug('Reading sensors')
+            sensors = Sensors()
+            sensors.read(result)
+        except subprocess.CalledProcessError:
+            self._logger.exception('Looks like lm-sensors is not installed')
+        except:
+            self._logger.exception('Unexpected failure reading sensors')
 
     def _subprocess_command(self, command):
         out = None
