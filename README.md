@@ -34,6 +34,32 @@ reading 'CPU Percentage':
 }
 ```
 
+When reading *sensors*, the lm-sensors command `sensors -u` is executed and 
+parsed. The attributes on the signal are similar to the psutil attributes,
+taking on the format of the word 'sensors', followed by the adapter name and
+temperature name, seperated by an underscore. For example when `sensors -u`
+returns:
+```
+acpitz-virtual-0
+Adapter: Virtual device
+temp1:
+  temp1_input: 26.800
+
+coretemp-isa-0000
+Adapter: ISA adapter
+Core 0:
+  temp2_input: 43.000
+  temp2_max: 105.000
+```
+The output signal would look like:
+```
+{
+    'sensors_acpitz-virtual-0_temp1_input': 26.8,
+    'sensors_coretemp-isa-0000_temp2_input': 43.0,
+    'sensors_coretemp-isa-0000_temp2_max': 105.0
+}
+```
+
 ------------------------------------------------------------------------------
 
 ProcessMetrics
