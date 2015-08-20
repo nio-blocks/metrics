@@ -5,7 +5,7 @@ from nio.common.signal.base import Signal
 from nio.common.command import command
 from nio.common.discovery import Discoverable, DiscoverableType
 from nio.metadata.properties import ObjectProperty, ExpressionProperty, \
-    PropertyHolder, BoolProperty
+    PropertyHolder, BoolProperty, VersionProperty
 from nio.modules.scheduler import Job
 
 
@@ -13,14 +13,14 @@ RETRY_LIMIT = 3
 
 
 class Menu(PropertyHolder):
-    
+
     virtual_memory = BoolProperty(title='Virtual Memory', default=True)
     memory_percent = BoolProperty(title='Memory Percentage', default=True)
     cpu_percent = BoolProperty(title='CPU Percentage', default=True)
     num_ctx_switches = BoolProperty(title='Number of Context Switches', default=True)
     num_fds = BoolProperty(title='Number of File Descriptors', default=True)
     is_running = BoolProperty(title='Is Running?', default=True)
-    
+
     children = BoolProperty(title='Children')
     threads = BoolProperty(title='Threads')
     cmd_line = BoolProperty(title='Command Line')
@@ -33,6 +33,7 @@ class NoPIDException(Exception):
 @Discoverable(DiscoverableType.block)
 class ProcessMetrics(Block):
 
+    version = VersionProperty('0.1.0', min_version='0.1.0')
     menu = ObjectProperty(Menu, title='Menu')
     pid_expr = ExpressionProperty(title='PID Expression',
                                   allow_none=True,
@@ -55,7 +56,7 @@ class ProcessMetrics(Block):
                 # if there's no PID in the signal, skip it
                 self._logger.debug(
                     "Skipping signal {}: No PID".format(sig.to_dict()))
-                
+
             except Exception as e:
                 self._logger.error(
                     "Error while processing signal: {}: {}".format(
@@ -63,7 +64,7 @@ class ProcessMetrics(Block):
 
         if results:
             self.notify_signals(results)
-                        
+
 
     def _collect_stats(self, pid):
         result = {'pid': pid}
@@ -96,7 +97,7 @@ class ProcessMetrics(Block):
 
             if self.menu.cmd_line:
                 result['cmd_line'] = ' '.join(proc.cmdline())
-                
+
         except Exception as e:
             self._logger.error(
                 "While processing system metrics: {0}".format(str(e))
