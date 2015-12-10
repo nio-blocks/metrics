@@ -12,7 +12,8 @@ Dependencies
 ------------
 -   [**psutil**](https://pypi.python.org/pypi/psutil)
 -   [lm-sensors](http://linux.die.net/man/1/sensors): (Optional) Used for
-        gathering cpu temperature info.
+        gathering cpu temperature info with `sensors` configuration option.
+        Install on Ubuntu with with: `sudo apt-get install lm-sensors`
 
 Commands
 --------
