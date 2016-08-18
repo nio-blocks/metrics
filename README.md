@@ -5,8 +5,8 @@ Get statistics from the computer
 
 Properties
 ----------
--   menu (dict(bool)): Flags for turning off/on various metrics
--   interval (timedelta): Interval to check metrics and notify a signal
+* **menu (dict(bool))**: Flags for turning off/on various metrics
+* **interval (timedelta)**: Interval to check metrics and notify a signal
 
 Dependencies
 ------------
@@ -17,7 +17,10 @@ Dependencies
 
 Commands
 --------
-TODO: document this
+* **cpu**: Returns the overall cpu usage
+* **platform**: Returns the platform data
+* **timestamp**: Returns the current system timestamp
+* **report**: Returns an overall report of the gathered statistics
 
 Input
 -----
@@ -70,7 +73,7 @@ Get process statistics from the computer
 
 Properties
 ----------
-TODO: document this
+* **menu (dict(bool))**: Flags for turning off/on various metrics
 
 Dependencies
 ------------
