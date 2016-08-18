@@ -5,8 +5,8 @@ Get statistics from the computer
 
 Properties
 ----------
-* **menu (dict(bool))**: Flags for turning off/on various metrics
-* **interval (timedelta)**: Interval to check metrics and notify a signal
+* **menu** (dict(bool)): Flags for turning off/on various metrics
+* **interval** (timedelta): Interval to check metrics and notify a signal
 
 Dependencies
 ------------
@@ -28,7 +28,7 @@ Any list of signals.
 
 Output
 ------
-An attibute is added for each metric read. Attribute names are the *menu* name
+An attribute is added for each metric read. Attribute names are the *menu* name
 followed by an underscore and then then specific metric name. For example, when
 reading 'CPU Percentage':
 ```
@@ -38,10 +38,10 @@ reading 'CPU Percentage':
 }
 ```
 
-When reading *sensors*, the lm-sensors command `sensors -u` is executed and 
+When reading *sensors*, the lm-sensors command `sensors -u` is executed and
 parsed. The attributes on the signal are similar to the psutil attributes,
 taking on the format of the word 'sensors', followed by the adapter name and
-temperature name, seperated by an underscore. For example when `sensors -u`
+temperature name, separated by an underscore. For example when `sensors -u`
 returns:
 ```
 acpitz-virtual-0
@@ -73,7 +73,7 @@ Get process statistics from the computer
 
 Properties
 ----------
-* **menu (dict(bool))**: Flags for turning off/on various metrics
+* **menu** (dict(bool)): Flags for turning off/on various metrics
 
 Dependencies
 ------------
