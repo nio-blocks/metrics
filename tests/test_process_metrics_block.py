@@ -1,12 +1,13 @@
 import os
+from threading import Event
+from nio.block.terminals import DEFAULT_TERMINAL
+from nio.signal.base import Signal
+from nio.testing.block_test_case import NIOBlockTestCase
 from ..process_metrics_block import ProcessMetrics
-from nio.util.support.block_test_case import NIOBlockTestCase
-from nio.modules.threading import Event
-from nio.common.signal.base import Signal
 
 
 class EventProcessMetrics(ProcessMetrics):
-    
+
     def __init__(self, e):
         super().__init__()
         self._e = e
@@ -16,11 +17,10 @@ class EventProcessMetrics(ProcessMetrics):
         self._e.set()
 
 
-class TestProcessMetrics(NIOBlockTestCase):
+class TestProcessMetricsBlock(NIOBlockTestCase):
 
     def setUp(self):
         super().setUp()
-        self.report = None
         self.expected = [
             'cpu_percentage',
             'virtual_memory',
@@ -31,14 +31,11 @@ class TestProcessMetrics(NIOBlockTestCase):
             'pid'
         ]
 
-    def signals_notified(self, signals, output_id='default'):
-        self.report = signals[0]
-
     def test_generate_metrics(self):
         event = Event()
         blk = EventProcessMetrics(event)
         self.configure_block(blk, {
-            'pid_expr': "{{$pid}}"
+            'pid_expr': "{{ $pid }}"
         })
         the_pid = os.getpid()
         blk.start()
@@ -46,12 +43,12 @@ class TestProcessMetrics(NIOBlockTestCase):
         event.wait(1)
         blk.stop()
         self.assert_num_signals_notified(1)
-        self.assertIsNotNone(self.report)
+        self.assertIsNotNone(self.last_notified)
 
-        for k in self.report.to_dict():
+        for k in self.last_notified[DEFAULT_TERMINAL][0].to_dict():
             for idx, f in enumerate(self.expected):
                 if k.startswith(f):
                     break
                 elif idx == len(self.expected)-1:
                     raise AssertionError("Unexpected report key '%s'" % k)
-                
+

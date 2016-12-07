@@ -1,10 +1,10 @@
 import psutil
 
-from nio.common.block.base import Block
-from nio.common.signal.base import Signal
-from nio.common.command import command
-from nio.common.discovery import Discoverable, DiscoverableType
-from nio.metadata.properties import ObjectProperty, ExpressionProperty, \
+from nio.block.base import Block
+from nio.signal.base import Signal
+from nio.command import command
+from nio.util.discovery import discoverable
+from nio.properties import ObjectProperty, Property, \
     PropertyHolder, BoolProperty, VersionProperty
 from nio.modules.scheduler import Job
 
@@ -21,23 +21,21 @@ class Menu(PropertyHolder):
     num_fds = BoolProperty(title='Number of File Descriptors', default=True)
     is_running = BoolProperty(title='Is Running?', default=True)
 
-    children = BoolProperty(title='Children')
-    threads = BoolProperty(title='Threads')
-    cmd_line = BoolProperty(title='Command Line')
+    children = BoolProperty(title='Children', default=False)
+    threads = BoolProperty(title='Threads', default=False)
+    cmd_line = BoolProperty(title='Command Line', default=False)
 
 
 class NoPIDException(Exception):
     pass
 
 
-@Discoverable(DiscoverableType.block)
+@discoverable
 class ProcessMetrics(Block):
 
     version = VersionProperty('0.1.0', min_version='0.1.0')
-    menu = ObjectProperty(Menu, title='Menu')
-    pid_expr = ExpressionProperty(title='PID Expression',
-                                  allow_none=True,
-                                  attr_default=NoPIDException)
+    menu = ObjectProperty(Menu, title='Menu', default=Menu())
+    pid_expr = Property(title='PID', allow_none=True)
 
     def __init__(self):
         super().__init__()
@@ -46,22 +44,10 @@ class ProcessMetrics(Block):
     def process_signals(self, signals):
         results = []
         for sig in signals:
-            try:
-                pid = self.pid_expr(sig)
-                stats = self._collect_stats(pid)
-                if stats:
-                    results.append(Signal(stats))
-
-            except NoPIDException:
-                # if there's no PID in the signal, skip it
-                self._logger.debug(
-                    "Skipping signal {}: No PID".format(sig.to_dict()))
-
-            except Exception as e:
-                self._logger.error(
-                    "Error while processing signal: {}: {}".format(
-                        type(e).__name__, str(e)))
-
+            pid = self.pid_expr(sig)
+            stats = self._collect_stats(pid)
+            if stats:
+                results.append(Signal(stats))
         if results:
             self.notify_signals(results)
 
@@ -71,42 +57,42 @@ class ProcessMetrics(Block):
         proc = psutil.Process(pid)
 
         try:
-            if self.menu.cpu_percent:
+            if self.menu().cpu_percent():
                 result['cpu_percentage'] = proc.cpu_percent()
 
-            if self.menu.memory_percent:
+            if self.menu().memory_percent():
                 result['memory_percent'] = proc.memory_percent()
 
-            if self.menu.virtual_memory:
+            if self.menu().virtual_memory():
                 result['virtual_memory'] = proc.memory_info()[1]
 
-            if self.menu.num_ctx_switches:
+            if self.menu().num_ctx_switches():
                 result['num_ctx_switches'] = proc.num_ctx_switches()
 
-            if self.menu.num_fds:
+            if self.menu().num_fds():
                 result['num_fds'] = proc.num_fds()
 
-            if self.menu.is_running:
+            if self.menu().is_running():
                 result['is_running'] = proc.is_running()
 
-            if self.menu.children:
+            if self.menu().children():
                 result['children'] = proc.children()
 
-            if self.menu.threads:
+            if self.menu().threads():
                 result['threads'] = proc.threads()
 
-            if self.menu.cmd_line:
+            if self.menu().cmd_line():
                 result['cmd_line'] = ' '.join(proc.cmdline())
 
         except Exception as e:
-            self._logger.error(
+            self.logger.error(
                 "While processing system metrics: {0}".format(str(e))
             )
             if self._retry_count < RETRY_LIMIT:
                 self._retry_count += 1
-                return self._collect_stats()
+                return self._collect_stats(pid)
             else:
-                self._logger.error(
+                self.logger.error(
                     "System report failed {0} times, aborting...".format(
                         RETRY_LIMIT)
                 )
