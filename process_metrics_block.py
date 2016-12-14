@@ -1,13 +1,8 @@
 import psutil
-
 from nio.block.base import Block
-from nio.signal.base import Signal
-from nio.command import command
-from nio.util.discovery import discoverable
 from nio.properties import ObjectProperty, Property, \
     PropertyHolder, BoolProperty, VersionProperty
-from nio.modules.scheduler import Job
-
+from nio.signal.base import Signal
 
 RETRY_LIMIT = 3
 
@@ -30,7 +25,6 @@ class NoPIDException(Exception):
     pass
 
 
-@discoverable
 class ProcessMetrics(Block):
 
     version = VersionProperty('0.1.0', min_version='0.1.0')
@@ -51,10 +45,9 @@ class ProcessMetrics(Block):
         if results:
             self.notify_signals(results)
 
-
     def _collect_stats(self, pid):
         result = {'pid': pid}
-        proc = psutil.Process(pid)
+        proc = psutil.Process(int(pid))
 
         try:
             if self.menu().cpu_percent():
