@@ -35,7 +35,7 @@ class TestProcessMetricsBlock(NIOBlockTestCase):
         event = Event()
         blk = EventProcessMetrics(event)
         self.configure_block(blk, {
-            'pid_expr': "{{ $pid }}"
+            'pid': "{{ $pid }}"
         })
         the_pid = os.getpid()
         blk.start()

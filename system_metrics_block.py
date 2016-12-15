@@ -1,24 +1,20 @@
-import os
-import re
-import psutil
 import ctypes
-import subprocess
+import os
 import platform
+import re
+import subprocess
 from datetime import datetime
-import pickle
+
+import psutil
 from nio.block.base import Block
-from nio.signal.base import Signal
 from nio.command import command
-from nio.util.discovery import discoverable
-from nio.properties.object import ObjectProperty
-from nio.properties.holder import PropertyHolder
 from nio.properties.bool import BoolProperty
-from nio.properties.timedelta import TimeDeltaProperty
+from nio.properties.holder import PropertyHolder
+from nio.properties.object import ObjectProperty
 from nio.properties.version import VersionProperty
-from nio.modules.scheduler import Job
+from nio.signal.base import Signal
+
 from .sensors import Sensors
-
-
 
 RETRY_LIMIT = 3
 
@@ -46,7 +42,6 @@ class Menu(PropertyHolder):
 @command('timestamp')
 @command('cpu')
 @command('report')
-@discoverable
 class SystemMetrics(Block):
 
     version = VersionProperty('0.1.0', min_version='0.1.0')

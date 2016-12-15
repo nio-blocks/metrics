@@ -1,13 +1,8 @@
 import psutil
-
 from nio.block.base import Block
-from nio.signal.base import Signal
-from nio.command import command
-from nio.util.discovery import discoverable
-from nio.properties import ObjectProperty, Property, \
+from nio.properties import ObjectProperty, IntProperty, \
     PropertyHolder, BoolProperty, VersionProperty
-from nio.modules.scheduler import Job
-
+from nio.signal.base import Signal
 
 RETRY_LIMIT = 3
 
@@ -30,12 +25,11 @@ class NoPIDException(Exception):
     pass
 
 
-@discoverable
 class ProcessMetrics(Block):
 
     version = VersionProperty('0.1.0', min_version='0.1.0')
     menu = ObjectProperty(Menu, title='Menu', default=Menu())
-    pid_expr = Property(title='PID', allow_none=True)
+    pid = IntProperty(title='PID', allow_none=False)
 
     def __init__(self):
         super().__init__()
@@ -44,13 +38,12 @@ class ProcessMetrics(Block):
     def process_signals(self, signals):
         results = []
         for sig in signals:
-            pid = self.pid_expr(sig)
+            pid = self.pid(sig)
             stats = self._collect_stats(pid)
             if stats:
                 results.append(Signal(stats))
         if results:
             self.notify_signals(results)
-
 
     def _collect_stats(self, pid):
         result = {'pid': pid}

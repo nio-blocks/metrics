@@ -89,4 +89,18 @@ Any list of signals.
 
 Output
 ------
-TODO: document this
+metrics about the process.
+
+```
+{
+  'pid': '636',
+  'cpu_percentage': 0.0,
+  'cmd_line': '/Applications/TestApp.app',
+  'num_ctx_switches': pctxsw(voluntary=2623955, involuntary=0),
+  'memory_percent': 6.918835639953613,
+  'num_fds': 137,
+  'virtual_memory': 8270610432,
+  'is_running': True,
+  'children': [<psutil.Process(pid=645, name='fsnotifier') at 4384871256>]
+}
+```
