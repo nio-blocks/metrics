@@ -1,6 +1,6 @@
 import psutil
 from nio.block.base import Block
-from nio.properties import ObjectProperty, Property, \
+from nio.properties import ObjectProperty, IntProperty, \
     PropertyHolder, BoolProperty, VersionProperty
 from nio.signal.base import Signal
 
@@ -29,7 +29,7 @@ class ProcessMetrics(Block):
 
     version = VersionProperty('0.1.0', min_version='0.1.0')
     menu = ObjectProperty(Menu, title='Menu', default=Menu())
-    pid_expr = Property(title='PID', allow_none=True)
+    pid = IntProperty(title='PID', allow_none=False)
 
     def __init__(self):
         super().__init__()
@@ -38,7 +38,7 @@ class ProcessMetrics(Block):
     def process_signals(self, signals):
         results = []
         for sig in signals:
-            pid = self.pid_expr(sig)
+            pid = self.pid(sig)
             stats = self._collect_stats(pid)
             if stats:
                 results.append(Signal(stats))
