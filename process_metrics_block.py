@@ -47,7 +47,7 @@ class ProcessMetrics(Block):
 
     def _collect_stats(self, pid):
         result = {'pid': pid}
-        proc = psutil.Process(int(pid))
+        proc = psutil.Process(pid)
 
         try:
             if self.menu().cpu_percent():
