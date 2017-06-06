@@ -5,8 +5,8 @@ Get statistics from the computer
 
 Properties
 ----------
-* **menu** (dict(bool)): Flags for turning off/on various metrics
-* **interval** (timedelta): Interval to check metrics and notify a signal
+* **menu** (type:dict[bool]): Flags for turning off/on various metrics
+* **interval** (type:timedelta): Interval to check metrics and notify a signal
 
 Dependencies
 ------------
@@ -64,7 +64,7 @@ The output signal would look like:
 }
 ```
 
-------------------------------------------------------------------------------
+***
 
 ProcessMetrics
 ==============
@@ -73,7 +73,7 @@ Get process statistics from the computer
 
 Properties
 ----------
-* **menu** (dict(bool)): Flags for turning off/on various metrics
+* **menu** (type: dict[bool]): Flags for turning off/on various metrics
 
 Dependencies
 ------------

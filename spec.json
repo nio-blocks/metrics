@@ -1,0 +1,56 @@
+{
+  "nio/ProcessMetrics": {
+    "Description": "Get process statistics from the computer",
+    "Dependencies": [
+      "-   [**psutil**](https://pypi.python.org/pypi/psutil)"
+    ],
+    "Commands": {},
+    "Output": "metrics about the process.\n```\n{\n'pid': '636',\n'cpu_percentage': 0.0,\n'cmd_line': '/Applications/TestApp.app',\n'num_ctx_switches': pctxsw(voluntary=2623955, involuntary=0),\n'memory_percent': 6.918835639953613,\n'num_fds': 137,\n'virtual_memory': 8270610432,\n'is_running': True,\n'children': [<psutil.Process(pid=645, name='fsnotifier') at 4384871256>]\n}\n```",
+    "Version": "1.0.0",
+    "Category": "Hardware",
+    "Properties": {
+      "menu": {
+        "type": "dict[bool]",
+        "description": "Flags for turning off/on various metrics"
+      }
+    },
+    "Input": "Any list of signals."
+  },
+  "nio/Metrics": {
+    "Description": "Get statistics from the computer",
+    "Dependencies": [
+      "-   [**psutil**](https://pypi.python.org/pypi/psutil)",
+      "-   [lm-sensors](http://linux.die.net/man/1/sensors): (Optional) Used for",
+      "gathering cpu temperature info with `sensors` configuration option.",
+      "Install on Ubuntu with with: `sudo apt-get install lm-sensors`"
+    ],
+    "Commands": {
+      "report": {
+        "description": "Returns an overall report of the gathered statistics"
+      },
+      "timestamp": {
+        "description": "Returns the current system timestamp"
+      },
+      "platform": {
+        "description": "Returns the platform data"
+      },
+      "cpu": {
+        "description": "Returns the overall cpu usage"
+      }
+    },
+    "Output": "An attribute is added for each metric read. Attribute names are the *menu* name\nfollowed by an underscore and then then specific metric name. For example, when\nreading 'CPU Percentage':\n```\n{\n'cpu_percentage_overall': 23.2,\n'cpu_percentage_per_cpu': [39.6, 2.5, 45.3, 6.0, 41.4, 4.6, 41.0, 5.6]\n}\n```\nWhen reading *sensors*, the lm-sensors command `sensors -u` is executed and\nparsed. The attributes on the signal are similar to the psutil attributes,\ntaking on the format of the word 'sensors', followed by the adapter name and\ntemperature name, separated by an underscore. For example when `sensors -u`\nreturns:\n```\nacpitz-virtual-0\nAdapter: Virtual device\ntemp1:\ntemp1_input: 26.800\ncoretemp-isa-0000\nAdapter: ISA adapter\nCore 0:\ntemp2_input: 43.000\ntemp2_max: 105.000\n```\nThe output signal would look like:\n```\n{\n'sensors_acpitz-virtual-0_temp1_input': 26.8,\n'sensors_coretemp-isa-0000_temp2_input': 43.0,\n'sensors_coretemp-isa-0000_temp2_max': 105.0\n}\n```",
+    "Version": "1.0.0",
+    "Category": "Hardware",
+    "Properties": {
+      "interval": {
+        "type": "timedelta",
+        "description": "Interval to check metrics and notify a signal"
+      },
+      "menu": {
+        "type": "dict[bool]",
+        "description": "Flags for turning off/on various metrics"
+      }
+    },
+    "Input": "Any list of signals."
+  }
+}
