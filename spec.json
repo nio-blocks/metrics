@@ -17,7 +17,7 @@
             }
         }
     },
-    "nio/Metrics": {
+    "nio/SystemMetrics": {
         "Description": "Get statistics from the computer",
         "Output": {
             "Description": "An attribute is added for each metric read. Attribute names are the *menu* name\nfollowed by an underscore and then then specific metric name. For example, when\nreading 'CPU Percentage':\n```\n{\n'cpu_percentage_overall': 23.2,\n'cpu_percentage_per_cpu': [39.6, 2.5, 45.3, 6.0, 41.4, 4.6, 41.0, 5.6]\n}\n```\nWhen reading *sensors*, the lm-sensors command `sensors -u` is executed and\nparsed. The attributes on the signal are similar to the psutil attributes,\ntaking on the format of the word 'sensors', followed by the adapter name and\ntemperature name, separated by an underscore. For example when `sensors -u`\nreturns:\n```\nacpitz-virtual-0\nAdapter: Virtual device\ntemp1:\ntemp1_input: 26.800\ncoretemp-isa-0000\nAdapter: ISA adapter\nCore 0:\ntemp2_input: 43.000\ntemp2_max: 105.000\n```\nThe output signal would look like:\n```\n{\n'sensors_acpitz-virtual-0_temp1_input': 26.8,\n'sensors_coretemp-isa-0000_temp2_input': 43.0,\n'sensors_coretemp-isa-0000_temp2_max': 105.0\n}\n```"
