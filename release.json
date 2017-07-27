@@ -4,7 +4,7 @@
     "Language": "Python",
     "Version": "1.0.0"
   },
-  "nio/Metrics": {
+  "nio/SystemMetrics": {
     "Reference": "github.com/nio-blocks/metrics.git@v1.0.0",
     "Language": "Python",
     "Version": "1.0.0"
