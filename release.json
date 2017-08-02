@@ -1,12 +1,12 @@
 {
   "nio/ProcessMetrics": {
-    "Reference": "github.com/nio-blocks/metrics.git@v1.0.0",
-    "Language": "Python",
-    "Version": "1.0.0"
+    "language": "Python",
+    "version": "0.0.1",
+    "reference": "github.com/nio-blocks/metrics.git@v0.0.1"
   },
   "nio/SystemMetrics": {
-    "Reference": "github.com/nio-blocks/metrics.git@v1.0.0",
-    "Language": "Python",
-    "Version": "1.0.0"
+    "language": "Python",
+    "version": "0.0.1",
+    "reference": "github.com/nio-blocks/metrics.git@v0.0.1"
   }
 }
