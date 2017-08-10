@@ -1,12 +1,15 @@
-from collections import defaultdict
 from threading import Event
 from unittest.mock import patch
+
 from nio.block.terminals import DEFAULT_TERMINAL
 from nio.testing.block_test_case import NIOBlockTestCase
 from nio.signal.base import Signal
+from nio.util.discovery import not_discoverable
+
 from ..system_metrics_block import SystemMetrics
 
 
+@not_discoverable
 class EventMetrics(SystemMetrics):
 
     def __init__(self, e):
@@ -16,6 +19,7 @@ class EventMetrics(SystemMetrics):
     def _collect_and_notify(self):
         super()._collect_and_notify()
         self._e.set()
+
 
 class TestSystemMetricsBlock(NIOBlockTestCase):
 
