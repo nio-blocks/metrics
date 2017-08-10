@@ -20,7 +20,7 @@ class Sensors():
             sensors values (dict):
                 Dictionary of sensors names (str) and values (float)
         '''
-        if response == None:
+        if response is None:
             response = {}
         sensors = \
             subprocess.check_output("sensors -u", shell=True).strip().decode()

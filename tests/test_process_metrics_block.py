@@ -1,11 +1,15 @@
 import os
 from threading import Event
+
 from nio.block.terminals import DEFAULT_TERMINAL
 from nio.signal.base import Signal
 from nio.testing.block_test_case import NIOBlockTestCase
+from nio.util.discovery import not_discoverable
+
 from ..process_metrics_block import ProcessMetrics
 
 
+@not_discoverable
 class EventProcessMetrics(ProcessMetrics):
 
     def __init__(self, e):
@@ -51,4 +55,3 @@ class TestProcessMetricsBlock(NIOBlockTestCase):
                     break
                 elif idx == len(self.expected)-1:
                     raise AssertionError("Unexpected report key '%s'" % k)
-

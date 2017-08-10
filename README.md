@@ -1,36 +1,70 @@
-Metrics
-=======
-
-Get statistics from the computer
+ProcessMetrics
+==============
+Get statistics about a process running on the computer.
 
 Properties
 ----------
-* **menu** (type:dict[bool]): Flags for turning off/on various metrics
-* **interval** (type:timedelta): Interval to check metrics and notify a signal
+- **menu**: Flags for turning off/on various metrics.
+- **pid**: Process identifiers for metrics to be queried about.
+
+Inputs
+------
+- **default**: Any list of signals.
+
+Outputs
+-------
+- **default**: A signal with metrics about the specific process.  See below for examples
+
+Commands
+--------
 
 Dependencies
 ------------
 -   [**psutil**](https://pypi.python.org/pypi/psutil)
--   [lm-sensors](http://linux.die.net/man/1/sensors): (Optional) Used for
-        gathering cpu temperature info with `sensors` configuration option.
-        Install on Ubuntu with with: `sudo apt-get install lm-sensors`
+
+Output Examples
+---------------
+Metrics about the process.
+```
+{
+  'pid': '636',
+  'cpu_percentage': 0.0,
+  'cmd_line': '/Applications/TestApp.app',
+  'num_ctx_switches': pctxsw(voluntary=2623955, involuntary=0),
+  'memory_percent': 6.918835639953613,
+  'num_fds': 137,
+  'virtual_memory': 8270610432,
+  'is_running': True,
+  'children': [<psutil.Process(pid=645, name='fsnotifier') at 4384871256>]
+}
+```
+
+SystemMetrics
+=============
+Get general statistics about the computer.
+
+Properties
+----------
+- **menu**: Flags for turning off/on various metrics.
+
+Inputs
+------
+- **default**: Any list of signals.
+
+Outputs
+-------
+- **default**: An attribute is added for each metric read. Attribute names are the menu name followed by an underscore and then then specific metric name.  See below for examples
 
 Commands
 --------
-* **cpu**: Returns the overall cpu usage
-* **platform**: Returns the platform data
-* **timestamp**: Returns the current system timestamp
-* **report**: Returns an overall report of the gathered statistics
+- **cpu**: Returns the overall cpu usage.
+- **platform**: Returns the platform data.
+- **report**: Returns an overall report of the gathered statistics.
+- **timestamp**: Returns the current system timestamp.
 
-Input
------
-Any list of signals.
-
-Output
-------
-An attribute is added for each metric read. Attribute names are the *menu* name
-followed by an underscore and then then specific metric name. For example, when
-reading 'CPU Percentage':
+Output Examples
+---------------
+When reading 'CPU Percentage':
 ```
 {
     'cpu_percentage_overall': 23.2,
@@ -65,42 +99,3 @@ The output signal would look like:
 ```
 
 ***
-
-ProcessMetrics
-==============
-
-Get process statistics from the computer
-
-Properties
-----------
-* **menu** (type: dict[bool]): Flags for turning off/on various metrics
-
-Dependencies
-------------
--   [**psutil**](https://pypi.python.org/pypi/psutil)
-
-Commands
---------
-None
-
-Input
------
-Any list of signals.
-
-Output
-------
-metrics about the process.
-
-```
-{
-  'pid': '636',
-  'cpu_percentage': 0.0,
-  'cmd_line': '/Applications/TestApp.app',
-  'num_ctx_switches': pctxsw(voluntary=2623955, involuntary=0),
-  'memory_percent': 6.918835639953613,
-  'num_fds': 137,
-  'virtual_memory': 8270610432,
-  'is_running': True,
-  'children': [<psutil.Process(pid=645, name='fsnotifier') at 4384871256>]
-}
-```

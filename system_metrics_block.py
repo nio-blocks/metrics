@@ -4,8 +4,8 @@ import platform
 import re
 import subprocess
 from datetime import datetime
-
 import psutil
+
 from nio.block.base import Block
 from nio.command import command
 from nio.properties.bool import BoolProperty
@@ -60,7 +60,8 @@ class SystemMetrics(Block):
 
     def _get_processor(self):
         '''Get type of processor
-        http://stackoverflow.com/questions/4842448/getting-processor-information-in-python
+        http://stackoverflow.com/questions/4842448/
+        getting-processor-information-in-python
         '''
         out = None
         if platform.system() == "Windows":
@@ -70,12 +71,14 @@ class SystemMetrics(Block):
             os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
             try:
                 command = "sysctl -n machdep.cpu.brand_string"
-                out = subprocess.check_output(command, shell=True).strip().decode()
+                out = subprocess.check_output(command, shell=True)\
+                    .strip().decode()
             finally:
                 os.environ['PATH'] = path
         elif platform.system() == "Linux":
             command = "cat /proc/cpuinfo"
-            all_info = subprocess.check_output(command, shell=True).strip().decode()
+            all_info = subprocess.check_output(command, shell=True)\
+                .strip().decode()
             for line in all_info.split("\n"):
                 if "model name" in line:
                     out = re.sub(".*model name.*:", "", line, 1)
@@ -91,9 +94,12 @@ class SystemMetrics(Block):
         out = {key: getattr(platform, key)() for key in
                ('machine', 'version', 'platform', 'dist', 'system')}
         out['python'] = {key: getattr(platform, "python_" + key)() for key in
-            ('implementation', 'compiler', 'version',
-            'version_tuple')
-        }
+                         (
+                             'implementation',
+                             'compiler',
+                             'version',
+                             'version_tuple'
+                         )}
         out['python']['architecture'] = int(ctypes.sizeof(ctypes.c_voidp) * 8)
         out['processor'] = self._get_processor()
         out['cores'] = len(psutil.cpu_percent(percpu=True))
@@ -121,7 +127,7 @@ class SystemMetrics(Block):
                 fields = ['overall', 'per_cpu']
                 for idx, f in enumerate(fields):
                     data = psutil.cpu_percent(percpu=bool(idx))
-                    result["{0}_{1}".format(base,f)] = data
+                    result["{0}_{1}".format(base, f)] = data
 
             # Virtual memory usage
             if self.menu().virtual_mem():
@@ -159,7 +165,7 @@ class SystemMetrics(Block):
             # quite long and not usually used.
             if self.menu().skt_conns():
                 result['network_connections'] = \
-                    [self.native_dict(skt._asdict()) \
+                    [self.native_dict(skt._asdict())
                      for skt in psutil.net_connections()]
 
         except Exception as e:
@@ -186,7 +192,7 @@ class SystemMetrics(Block):
         '''
         data = getattr(psutil, base)(*args)._asdict()
         for f in data.keys():
-            result['{0}_{1}'.format(base,f)] = data[f]
+            result['{0}_{1}'.format(base, f)] = data[f]
 
     def _collect_sensors_results(self, result):
         try:

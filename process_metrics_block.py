@@ -1,4 +1,5 @@
 import psutil
+
 from nio.block.base import Block
 from nio.properties import ObjectProperty, IntProperty, \
     PropertyHolder, BoolProperty, VersionProperty
@@ -12,7 +13,8 @@ class Menu(PropertyHolder):
     virtual_memory = BoolProperty(title='Virtual Memory', default=True)
     memory_percent = BoolProperty(title='Memory Percentage', default=True)
     cpu_percent = BoolProperty(title='CPU Percentage', default=True)
-    num_ctx_switches = BoolProperty(title='Number of Context Switches', default=True)
+    num_ctx_switches = BoolProperty(
+        title='Number of Context Switches', default=True)
     num_fds = BoolProperty(title='Number of File Descriptors', default=True)
     is_running = BoolProperty(title='Is Running?', default=True)
 
