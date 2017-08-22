@@ -6,7 +6,7 @@ from nio.testing.block_test_case import NIOBlockTestCase
 from nio.signal.base import Signal
 from nio.util.discovery import not_discoverable
 
-from ..system_metrics_block import SystemMetrics
+from ..system_metrics_block_deprecated import SystemMetrics
 
 
 @not_discoverable
