@@ -89,8 +89,8 @@
     "commands": {}
   },
   "nio/SystemMetrics": {
-    "version": "0.1.0",
-    "description": "Get general statistics about the computer.",
+    "version": "0.1.1",
+    "description": "DEPRECATED, USE HostMetrics INSTEAD - Get general statistics about the computer.",
     "properties": {
       "menu": {
         "title": "Menu",
