@@ -1,11 +1,10 @@
-ProcessMetrics
-==============
-Get statistics about a process running on the computer.
+HostMetrics
+===========
+Get general statistics about the computer.
 
 Properties
 ----------
 - **menu**: Flags for turning off/on various metrics.
-- **pid**: Process identifiers for metrics to be queried about.
 
 Inputs
 ------
@@ -13,7 +12,31 @@ Inputs
 
 Outputs
 -------
-- **default**: A signal with metrics about the specific process.  See below for examples
+- **default**: An attribute is added for each metric read. Attribute names are the menu name followed by an underscore and then then specific metric name.
+
+Commands
+--------
+- **cpu**: Returns the overall cpu usage.
+- **platform**: Returns the platform data.
+- **report**: Returns an overall report of the gathered statistics.
+- **timestamp**: Returns the current system timestamp.
+
+ProcessMetrics
+==============
+Get statistics about a process running on the computer.
+
+Properties
+----------
+- **menu**: Flags for turning off/on various metrics.
+- **pid**: Process identifier for metrics to be queried on.
+
+Inputs
+------
+- **default**: Any list of signals.
+
+Outputs
+-------
+- **default**: A signal with metrics about the specific process.
 
 Commands
 --------
@@ -41,7 +64,7 @@ Metrics about the process.
 
 SystemMetrics
 =============
-Get general statistics about the computer.
+DEPRECATED, USE HostMetrics INSTEAD - Get general statistics about the computer.
 
 Properties
 ----------
@@ -53,7 +76,7 @@ Inputs
 
 Outputs
 -------
-- **default**: An attribute is added for each metric read. Attribute names are the menu name followed by an underscore and then then specific metric name.  See below for examples
+- **default**: An attribute is added for each metric read. Attribute names are the menu name followed by an underscore and then then specific metric name.
 
 Commands
 --------
@@ -71,7 +94,6 @@ When reading 'CPU Percentage':
     'cpu_percentage_per_cpu': [39.6, 2.5, 45.3, 6.0, 41.4, 4.6, 41.0, 5.6]
 }
 ```
-
 When reading *sensors*, the lm-sensors command `sensors -u` is executed and
 parsed. The attributes on the signal are similar to the psutil attributes,
 taking on the format of the word 'sensors', followed by the adapter name and
@@ -82,7 +104,6 @@ acpitz-virtual-0
 Adapter: Virtual device
 temp1:
   temp1_input: 26.800
-
 coretemp-isa-0000
 Adapter: ISA adapter
 Core 0:
@@ -98,4 +119,3 @@ The output signal would look like:
 }
 ```
 
-***
