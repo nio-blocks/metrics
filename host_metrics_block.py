@@ -42,7 +42,7 @@ class Menu(PropertyHolder):
 @command('timestamp')
 @command('cpu')
 @command('report')
-class SystemMetrics(Block):
+class HostMetrics(Block):
 
     version = VersionProperty('0.1.0', min_version='0.1.0')
     menu = ObjectProperty(Menu, title='Menu', default=Menu())

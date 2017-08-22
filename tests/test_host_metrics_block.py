@@ -6,11 +6,11 @@ from nio.testing.block_test_case import NIOBlockTestCase
 from nio.signal.base import Signal
 from nio.util.discovery import not_discoverable
 
-from ..system_metrics_block_deprecated import SystemMetrics
+from ..host_metrics_block import HostMetrics
 
 
 @not_discoverable
-class EventMetrics(SystemMetrics):
+class EventMetrics(HostMetrics):
 
     def __init__(self, e):
         super().__init__()
@@ -21,7 +21,7 @@ class EventMetrics(SystemMetrics):
         self._e.set()
 
 
-class TestSystemMetricsBlock(NIOBlockTestCase):
+class TestHostMetricsBlock(NIOBlockTestCase):
 
     def setUp(self):
         super().setUp()
@@ -51,7 +51,7 @@ class TestSystemMetricsBlock(NIOBlockTestCase):
                 elif idx == len(self.expected)-1:
                     raise AssertionError("Unexpected report key '%s'" % k)
 
-    @patch(SystemMetrics.__module__ + '.Sensors.read')
+    @patch(HostMetrics.__module__ + '.Sensors.read')
     def test_sensors(self, patch_read):
         event = Event()
         blk = EventMetrics(event)
