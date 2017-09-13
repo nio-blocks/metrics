@@ -2,6 +2,9 @@
   "nio/HostMetrics": {
     "version": "0.1.0",
     "description": "Get general statistics about the computer.",
+    "categories": [
+      "Hardware"
+    ],
     "properties": {
       "menu": {
         "title": "Menu",
@@ -52,6 +55,9 @@
   "nio/ProcessMetrics": {
     "version": "0.1.0",
     "description": "Get statistics about a process running on the computer.",
+    "categories": [
+      "Hardware"
+    ],
     "properties": {
       "menu": {
         "title": "Menu",
