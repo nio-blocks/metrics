@@ -92,6 +92,7 @@ Metrics about the process.
   'memory_percent': 6.918835639953613,
   'num_fds': 137,
   'virtual_memory': 8270610432,
+  'rss_memory': 8650712452,
   'is_running': True,
   'children': [<psutil.Process(pid=645, name='fsnotifier') at 4384871256>]
 }
