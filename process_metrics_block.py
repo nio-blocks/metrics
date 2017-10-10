@@ -30,7 +30,7 @@ class NoPIDException(Exception):
 
 class ProcessMetrics(Block):
 
-    version = VersionProperty('0.1.0', min_version='0.1.0')
+    version = VersionProperty("0.1.1")
     menu = ObjectProperty(Menu, title='Menu', default=Menu())
     pid = IntProperty(title='PID', allow_none=False)
 
