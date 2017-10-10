@@ -28,6 +28,7 @@ class TestProcessMetricsBlock(NIOBlockTestCase):
         self.expected = [
             'cpu_percentage',
             'virtual_memory',
+            'rss_memory',
             'num_ctx_switches',
             'memory_percent',
             'num_fds',

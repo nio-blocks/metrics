@@ -11,6 +11,7 @@ RETRY_LIMIT = 3
 class Menu(PropertyHolder):
 
     virtual_memory = BoolProperty(title='Virtual Memory', default=True)
+    rss_memory = BoolProperty(title='RSS Memory', default=True)
     memory_percent = BoolProperty(title='Memory Percentage', default=True)
     cpu_percent = BoolProperty(title='CPU Percentage', default=True)
     num_ctx_switches = BoolProperty(
@@ -58,8 +59,12 @@ class ProcessMetrics(Block):
             if self.menu().memory_percent():
                 result['memory_percent'] = proc.memory_percent()
 
+            memory_info = proc.memory_info()
             if self.menu().virtual_memory():
-                result['virtual_memory'] = proc.memory_info()[1]
+                result['virtual_memory'] = memory_info[1]
+
+            if self.menu().rss_memory():
+                result['rss_memory'] = memory_info[0]
 
             if self.menu().num_ctx_switches():
                 result['num_ctx_switches'] = proc.num_ctx_switches()

@@ -72,7 +72,8 @@
           "num_ctx_switches": true,
           "num_fds": true,
           "threads": false,
-          "virtual_memory": true
+          "virtual_memory": true,
+          "rss_memory": true
         }
       },
       "pid": {
