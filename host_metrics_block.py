@@ -58,53 +58,6 @@ class HostMetrics(Block):
         '''returns the current system timestamp'''
         return datetime.isoformat(datetime.utcnow())
 
-    def _get_processor(self):
-        '''Get type of processor
-        http://stackoverflow.com/questions/4842448/
-        getting-processor-information-in-python
-        '''
-        out = None
-        if platform.system() == "Windows":
-            out = platform.processor()
-        elif platform.system() == "Darwin":
-            path = os.environ['PATH']
-            os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
-            try:
-                command = "sysctl -n machdep.cpu.brand_string"
-                out = subprocess.check_output(command, shell=True)\
-                    .strip().decode()
-            finally:
-                os.environ['PATH'] = path
-        elif platform.system() == "Linux":
-            command = "cat /proc/cpuinfo"
-            all_info = subprocess.check_output(command, shell=True)\
-                .strip().decode()
-            for line in all_info.split("\n"):
-                if "model name" in line:
-                    out = re.sub(".*model name.*:", "", line, 1)
-
-        if out is None:
-            return platform.processor()
-        else:
-            return out
-
-    def platform(self):
-        '''Returns platform data
-        '''
-        out = {key: getattr(platform, key)() for key in
-               ('machine', 'version', 'platform', 'dist', 'system')}
-        out['python'] = {key: getattr(platform, "python_" + key)() for key in
-                         (
-                             'implementation',
-                             'compiler',
-                             'version',
-                             'version_tuple'
-                         )}
-        out['python']['architecture'] = int(ctypes.sizeof(ctypes.c_voidp) * 8)
-        out['processor'] = self._get_processor()
-        out['cores'] = len(psutil.cpu_percent(percpu=True))
-        return out
-
     def cpu(self):
         '''returns the overall cpu usage'''
         return psutil.cpu_percent(percpu=False)
