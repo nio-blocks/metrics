@@ -7,7 +7,7 @@
     ],
     "properties": {
       "menu": {
-        "title": "Menu",
+        "title": "menu",
         "type": "ObjectType",
         "description": "Flags for turning off/on various metrics.",
         "default": {
@@ -30,7 +30,7 @@
     },
     "outputs": {
       "default": {
-        "description": "An attribute is added for each metric read. Attribute names are the menu name followed by an underscore and then then specific metric name."
+        "description": "An attribute is added for each metric read. Attribute names are the menu name followed by an underscore and then the specific metric name."
       }
     },
     "commands": {
@@ -60,7 +60,7 @@
     ],
     "properties": {
       "menu": {
-        "title": "Menu",
+        "title": "menu",
         "type": "ObjectType",
         "description": "Flags for turning off/on various metrics.",
         "default": {
@@ -77,7 +77,7 @@
         }
       },
       "pid": {
-        "title": "PID",
+        "title": "pid",
         "type": "IntType",
         "description": "Process identifier for metrics to be queried on.",
         "default": null
